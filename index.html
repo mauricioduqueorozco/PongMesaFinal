@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+
+	<head>
+		<title>Gamepad API Demo</title>
+		<meta charset="utf-8">
+		
+		<link rel="stylesheet" href="style/bootstrap.min.css">
+		<link rel="stylesheet" href="style/gamepad.css">
+		<script type="text/javascript" src='server.js'></script>
+		<script type="text/javascript" src='componentes.js'></script>
+		<script type="text/javascript" src='logicDisplay.js'></script>
+		<script type="text/javascript" src='options.js'></script>
+		<script type="text/javascript" src='math.js'></script>
+		<script type="text/javascript" src='logical.js'></script>
+		<script type="text/javascript" src='graphicDisplay.js'></script>
+		<script type="text/javascript" src='dat.gui.min.js'></script>
+	</head>
+	
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<a class="brand" href="http://robhawkes.github.com/gamepad-demo">Mesa de Pong & PS3 Controller</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<section class="controller hero-unit">
+				<div id="controllerDisconnected">
+					<h1>Connect a gamepad</h1>
+					<p>Connect an xBox or PS3 gamepad and you will see a visual representation right here of every joystick movement and button press.</p>
+					<p>Make sure that you're using a new enough release of Firefox (29 or later) or Chrome and have installed any necessary drivers for your gamepad and OS combination.</p>
+				</div>
+
+				<ul id="xboxController">
+					<li id="xBoxLeftStick" class="stick"><span></span></li>
+					<li id="xBoxRightStick" class="stick"><span></span></li>
+					<li id="xBoxBackButton" class="button"></li>
+					<li id="xBoxHomeButton" class="button"></li>
+					<li id="xBoxStartButton" class="button"></li>
+					<ul id="dpad">
+						<li id="xBoxDpadUp" class="button"></li>
+						<li id="xBoxDpadDown" class="button"></li>
+						<li id="xBoxDpadLeft" class="button"></li>
+						<li id="xBoxDpadRight" class="button"></li>
+					</ul>
+					<ul id="letterButtons">
+						<li id="xBoxAButton" class="button">A</li>
+						<li id="xBoxBButton" class="button">B</li>
+						<li id="xBoxXButton" class="button">X</li>
+						<li id="xBoxYButton" class="button">Y</li>
+					</ul>
+					<li id="xBoxLbButton" class="button"></li>
+					<li id="xBoxRbButton" class="button"></li>
+				</ul>
+
+				<ul id="ps3Controller">
+					<li id="PS3LeftStick" class="stick"><span></span></li>
+					<li id="PS3RightStick" class="stick"><span></span></li>
+					<li id="PS3SelectButton" class="button"></li>
+					<li id="PS3HomeButton" class="button"></li>
+					<li id="PS3StartButton" class="button"></li>
+					<ul id="dpad">
+						<li id="PS3DpadUp" class="button"></li>
+						<li id="PS3DpadDown" class="button"></li>
+						<li id="PS3DpadLeft" class="button horizontal"></li>
+						<li id="PS3DpadRight" class="button horizontal"></li>
+					</ul>
+					<ul id="shapeButtons">
+						<li id="PS3CrossButton" class="button">Cross</li>
+						<li id="PS3CircleButton" class="button">Circle</li>
+						<li id="PS3SquareButton" class="button">Square</li>
+						<li id="PS3TriangleButton" class="button">Triangle</li>
+					</ul>
+					<li id="PS3Lb1Button" class="button"></li>
+					<li id="PS3Rb1Button" class="button"></li>
+				</ul>
+			</section>
+
+			<hr>
+
+			<div class="row">
+				<section class="span4">
+				<script>
+
+
+				</script></p>
+				</section>
+				<section class="span4">
+					
+				</section>
+				<section class="span4">
+				</section>
+			</div> <!--/row-->
+		<div> <!--/container-->
+
+	
+
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/gamepad.js"></script>
+	</body>
+</html>

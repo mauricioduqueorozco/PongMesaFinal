@@ -1,0 +1,72 @@
+components[prueba2].x1 = this.getCoorX(components[mesa]) + components[mesa].x1;
+	components[prueba2].x1 = this.getCoorY(components[mesa]) + components[mesa].y1;
+	//components[prueba2].a = this.getCoorTan(components[mesa]) * 180 / Math.PI
+
+	/*var datTrs = this.getTraslation(components[prueba],10,10);
+	
+
+	components[prueba].x1 = datTrs.x;
+	components[prueba].y1 = datTrs.y;
+	components[prueba].x2 = datTrs.x1;
+	components[prueba].y2 = datTrs.y1;
+
+	var datRot = this.getRotation(components[prueba],this.angle);
+
+	components[prueba].x2 = datRot.x;
+	components[prueba].y2 = datRot.y;*/
+
+
+	GraphicDisplay.prototype.getRotation = function(component, angle){
+	var alpha = this.getAngle(angle);
+	var x_prima = Math.round(component.x1 + (component.x2 - component.x1) * Math.cos(alpha) - (component.y2 - component.y1) * Math.sin(alpha));
+	var y_prima = Math.round(component.y1 + (component.x2 - component.x1) * Math.sin(alpha) + (component.y2 - component.y1) * Math.cos(alpha));
+
+	return({x : x_prima,
+			y : y_prima});
+};
+
+GraphicDisplay.prototype.getTraslation = function(component,tx,ty){
+	var x1_prima = component.x1 + tx;
+	var y1_prima = component.y1 + ty;
+	var x2_prima = component.x2 + tx;
+	var y2_prima = component.y2 + ty;
+	return({x : x1_prima,
+			y : y1_prima,
+			x1 : x2_prima,
+			y1 : y2_prima});
+};
+
+GraphicDisplay.prototype.getDistance = function(x,y,x1,y1){
+	var distance = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
+	return distance.toFixed(2);
+};
+
+
+GraphicDisplay.prototype.getCoor = function(datos){
+	var longitud = datos.longitud;
+	var angulo = this.getAngle(datos.angulo);
+
+	var desp_X = Math.cos(angulo) * longitud;
+	var desp_Y = Math.sin(angulo) * longitud;
+	return {xf : desp_X,
+			yf : desp_Y}
+};
+
+GraphicDisplay.prototype.getCoorX = function(x , a , l){
+	var longitud = l;
+	var angulo = a;
+	var desp_X = Math.cos(angulo) * longitud;
+	return desp_X
+};
+GraphicDisplay.prototype.getCoorY = function(y , a , l){
+	var longitud = l;
+	var angulo = a;
+	var desp_Y = Math.sin(angulo) * longitud;
+	return desp_Y
+};
+GraphicDisplay.prototype.getCoorTan = function(component){
+	var x = component.x1;
+	var y = component.y1
+	var x1 = this.getCoorX(component);
+	var y1 = this.getCoorY(component);
+};
