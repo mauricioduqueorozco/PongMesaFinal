@@ -6,5 +6,6 @@ var FizzyText = function() {
 	  this.Largo = 2.74 / 2;
 	  this.Alto_Mesa = 0.76;
 	  this.Densidad_MDF = 800;
-	  this.Peso = ' Kg';	 
+	  this.Peso = ' Kg';
+	  this.displayCentros = true;	 
 };

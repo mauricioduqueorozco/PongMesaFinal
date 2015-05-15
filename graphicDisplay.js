@@ -32,6 +32,7 @@ GraphicDisplay.prototype.init = function() {
 	this.centrosMasa(this.logicDisplay.components);
 	this.ejes(this.logicDisplay.components);
 	console.log(this.logicDisplay.components)
+
 };
 
 GraphicDisplay.prototype.normMedidas = function(){
@@ -118,7 +119,7 @@ GraphicDisplay.prototype.elements = function(){
 											  	2));
 
 
-
+	//centro de para movil superior
 	this.logicDisplay.addComponent(new Circle(this.middleX + this.largo / 3,
 												this.middleY,
 												10,
@@ -173,8 +174,14 @@ GraphicDisplay.prototype.centrosMasa = function(components){
 												(components[pie].y1 + components[pie].y2) / 2,
 												5,
 												'cm6'));
+	//Centro de gravedad general 
+	this.logicDisplay.addComponent(new Circle(components[mesa_back].x1 - components[mesa_back].l / 2,
+												components[mesa_back].y1,
+												5,
+												'cm7'));
 };
 GraphicDisplay.prototype.ejes = function(components){
+	var cm7 = this.findObject(components,'cm7');
 	var cm6 = this.findObject(components,'cm6');
 	var cm5 = this.findObject(components,'cm5');
 	var cm4 = this.findObject(components,'cm4');
@@ -183,6 +190,14 @@ GraphicDisplay.prototype.ejes = function(components){
 	var cm1 = this.findObject(components,'cm1');
 	var tapa1 = this.findObject(components,'tapa1');
 	var tapa2 = this.findObject(components,'tapa2');
+
+	this.logicDisplay.addComponent(new LineAngle(components[cm7].x1,
+												components[cm7].y1, 
+												50,
+												270,
+											 	'eje7',
+											  	'green', 
+											  	1.5));
 
 	this.logicDisplay.addComponent(new LineAngle(components[cm6].x1,
 												components[cm6].y1, 
@@ -352,6 +367,7 @@ GraphicDisplay.prototype.drawComponent = function(component) {
 	}
 };
 GraphicDisplay.prototype.move = function(components){
+		
 	var mesa = this.findObject(components,'mesa');
 	var mesa_back = this.findObject(components,'mesa_back');
 	var pie = this.findObject(components,'pie');
@@ -366,6 +382,7 @@ GraphicDisplay.prototype.move = function(components){
 	var tapa4 = this.findObject(components,'tapa4');
 	var tapa1P = this.findObject(components,'tapa1P');
 	var tapa2P = this.findObject(components,'tapa2P');
+	var cm7 = this.findObject(components,'cm7');
 	var cm6 = this.findObject(components,'cm6');
 	var cm5 = this.findObject(components,'cm5');
 	var cm4 = this.findObject(components,'cm4');
@@ -378,13 +395,25 @@ GraphicDisplay.prototype.move = function(components){
 	var eje4 = this.findObject(components,'eje4');
 	var eje5 = this.findObject(components,'eje5');
 	var eje6 = this.findObject(components,'eje6');
+	var eje7 = this.findObject(components,'eje7');
 	var ejeF = this.findObject(components,'ejeF');
 	var ejeF1 = this.findObject(components,'ejeF1');
 
-
-
 	components[mesa].a = this.fuerza;
 	components[mesa_back].a = 180 + components[mesa].a;
+
+	components[cm7].x1 = this.getCoorX(components[mesa_back].x1 ,
+										components[mesa_back].a,
+										components[mesa_back].l / 2);
+
+	components[cm7].y1 = this.getCoorY(components[mesa_back].y1 ,
+										components[mesa_back].a,
+										components[mesa_back].l / 2);
+	
+
+	components[eje7].x1 = components[cm7].x1;
+	components[eje7].y1 = components[cm7].y1;
+	components[eje7].a = 270;
 	
 	components[c2].x1 = this.getCoorX(components[mesa].x1 ,
 										components[mesa].a,
@@ -497,10 +526,33 @@ GraphicDisplay.prototype.getCoorY = function(y , a , l){
 };
 GraphicDisplay.prototype.setFuerza = function(fuerza){
 	this.fuerza = Math.round( fuerza );
+
 };
+
 GraphicDisplay.prototype.getDistance = function(x,y,x1,y1){
 	var distance = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
 	return distance.toFixed(2);
+};
+GraphicDisplay.prototype.setDisplay = function(value){
+
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm7')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm6')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm5')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm4')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm3')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm2')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm1')].setActive(value);	
+
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje7')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje6')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje5')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje4')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje3')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje2')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje1')].setActive(value);
+
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeF')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeF1')].setActive(value);	
 };
 
 

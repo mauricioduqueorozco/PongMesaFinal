@@ -23,6 +23,7 @@ window.onload = function() {
 	var densidad = gui.add(text, 'Densidad_MDF');
 
 	gui.add(text, 'Peso');
+	var displayCentros = gui.add(text, 'displayCentros');
 
 	gd.ancho_mesa = ancho_mesa.initialValue;
 	gd.largo = largo.initialValue;
@@ -30,8 +31,12 @@ window.onload = function() {
 	gd.alto_mesa = alto_mesa.initialValue;
 	gd.densidad = densidad.initialValue;
 
+	displayCentros.onChange(function(value) {
+		 gd.setDisplay(value);
+	});
+	
 	controller.onChange(function(value) {
-		 //gd.setAngle(value);
+		
 	});
 
 	fuerza.onChange(function(value) {
@@ -62,6 +67,7 @@ window.onload = function() {
 	gd.init();
 	setInterval(function () {
 		gd.execute();
+		console.log('ee')
 	}, 5);
 
 
