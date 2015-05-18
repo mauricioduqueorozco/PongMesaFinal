@@ -346,14 +346,21 @@ GraphicDisplay.prototype.drawAllComponents = function(components) {
 	}
 };
 GraphicDisplay.prototype.drawComponent = function(component) {
+
+	/*this.zoomFactor = 1 / Math.round(controller.axes[2] * 100);
+	if (this.zoomFactor == 0){
+		this.zoomFactor = 1;
+	}else if (this.zoomFactor < 0 ) {
+		this.zoomFactor = - this.zoomFactor;
+	};*/
 	switch (component.type) {
 		
 
 		case COMPONENT_TYPES.LINE:
-			this.drawLine(component.x1,
-						component.y1,
-						component.x2,
-						component.y2,
+			this.drawLine(component.x1 * this.zoomFactor,
+						component.y1 * this.zoomFactor,
+						component.x2 * this.zoomFactor,
+						component.y2 * this.zoomFactor,
 						component.color,
 						component.lineWidth
 						);
@@ -361,10 +368,10 @@ GraphicDisplay.prototype.drawComponent = function(component) {
   
 			break;
 		case COMPONENT_TYPES.RECTANGLE:
-			this.drawRectangle(component.x1,
-						component.y1,
-						component.x2,
-						component.y2,
+			this.drawRectangle(component.x1 * this.zoomFactor,
+						component.y1 * this.zoomFactor,
+						component.x2 * this.zoomFactor,
+						component.y2 * this.zoomFactor,
 						component.color,
 						component.lineWidth
 						);
@@ -372,9 +379,9 @@ GraphicDisplay.prototype.drawComponent = function(component) {
   
 			break;
 		case COMPONENT_TYPES.LINE_ANGLE:
-			this.drawLineAngle(component.x1,
-						component.y1,
-						component.l,
+			this.drawLineAngle(component.x1 * this.zoomFactor,
+						component.y1 * this.zoomFactor,
+						component.l * this.zoomFactor,
 						component.a,
 						component.color,
 						component.lineWidth
@@ -384,9 +391,9 @@ GraphicDisplay.prototype.drawComponent = function(component) {
 			break;
 		case COMPONENT_TYPES.CIRCLE:
 			this.drawCircle(
-					component.x1,
-					component.y1,
-					component.radius);
+					component.x1 * this.zoomFactor,
+					component.y1 * this.zoomFactor,
+					component.radius * this.zoomFactor);
 			break;
 		
 	}
@@ -425,13 +432,18 @@ GraphicDisplay.prototype.move = function(components){
 	var ejeF = this.findObject(components,'ejeF');
 	var ejeF1 = this.findObject(components,'ejeF1');
 	var ps3 = -Math.round(controller.axes[1] * 100);
-	if(ps3 >= 0){
+	
+	if (this.fuerza == 0){
+		if(ps3 >= 0){
 		ps3 = ps3;
+		}else{
+			ps3 = 0;
+		}
+		var angle = 90 - Math.acos(ps3/(8.93 * this.gravity)) * 180 / Math.PI;
 	}else{
-		ps3 = 0;
+		var angle = 90 - Math.acos(this.fuerza/(8.93 * this.gravity)) * 180 / Math.PI;
 	}
-	//var angle = 90 - Math.acos(this.fuerza/(8.93 * this.gravity)) * 180 / Math.PI;
-	var angle = 90 - Math.acos(ps3/(8.93 * this.gravity)) * 180 / Math.PI;
+	
 	
 	
 	if(isNaN(angle)){

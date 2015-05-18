@@ -9,3 +9,4 @@ var FizzyText = function() {
 	  this.Peso = ' Kg';
 	  this.displayCentros = true;	 
 };
+
