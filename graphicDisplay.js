@@ -32,7 +32,6 @@ GraphicDisplay.prototype.init = function() {
 	this.centrosMasa(this.logicDisplay.components);
 	this.ejes(this.logicDisplay.components);
 	console.log(this.logicDisplay.components)
-
 };
 
 GraphicDisplay.prototype.normMedidas = function(){
@@ -149,6 +148,8 @@ GraphicDisplay.prototype.centrosMasa = function(components){
 	var mesa_back = this.findObject(components,'mesa_back');
 	var p_movil = this.findObject(components,'p_movil');
 	var pie = this.findObject(components,'pie');
+	var tapa1 = this.findObject(components,'tapa1');
+	var tapa2 = this.findObject(components,'tapa2');
 
 	this.logicDisplay.addComponent(new Circle(components[mesa].x1 + components[mesa].l / 2,
 												this.middleY - this.ancho_perfil / 2,
@@ -179,8 +180,18 @@ GraphicDisplay.prototype.centrosMasa = function(components){
 												components[mesa_back].y1,
 												5,
 												'cm7'));
+	this.logicDisplay.addComponent(new Circle(  (components[tapa2].x1 + components[tapa1].x1) / 2,
+												((components[tapa2].y1 + components[tapa1].y1) / 2) + this.ancho_perfil / 2,
+												5,
+												'cm8'));
+	this.logicDisplay.addComponent(new Circle(  (components[tapa2].x1 + components[tapa1].x1) / 2,
+												((components[tapa2].y1 + components[tapa1].y1) / 2) + this.ancho_perfil + this.ancho_mdf / 2,
+												5,
+												'cm9'));
 };
 GraphicDisplay.prototype.ejes = function(components){
+	var cm9 = this.findObject(components,'cm9');
+	var cm8 = this.findObject(components,'cm8');
 	var cm7 = this.findObject(components,'cm7');
 	var cm6 = this.findObject(components,'cm6');
 	var cm5 = this.findObject(components,'cm5');
@@ -256,6 +267,20 @@ GraphicDisplay.prototype.ejes = function(components){
 												270,
 											 	'ejeF1',
 											  	'blue', 
+											  	1.5));
+	this.logicDisplay.addComponent(new LineAngle(components[cm8].x1,
+												components[cm8].y1, 
+												50,
+												270,
+											 	'ejeC',
+											  	'green', 
+											  	1.5));
+	this.logicDisplay.addComponent(new LineAngle(components[cm9].x1,
+												components[cm9].y1, 
+												50,
+												270,
+											 	'ejeC1',
+											  	'green', 
 											  	1.5));
 
 };
@@ -367,7 +392,6 @@ GraphicDisplay.prototype.drawComponent = function(component) {
 	}
 };
 GraphicDisplay.prototype.move = function(components){
-		
 	var mesa = this.findObject(components,'mesa');
 	var mesa_back = this.findObject(components,'mesa_back');
 	var pie = this.findObject(components,'pie');
@@ -382,6 +406,8 @@ GraphicDisplay.prototype.move = function(components){
 	var tapa4 = this.findObject(components,'tapa4');
 	var tapa1P = this.findObject(components,'tapa1P');
 	var tapa2P = this.findObject(components,'tapa2P');
+	var cm9 = this.findObject(components,'cm9');
+	var cm8 = this.findObject(components,'cm8');
 	var cm7 = this.findObject(components,'cm7');
 	var cm6 = this.findObject(components,'cm6');
 	var cm5 = this.findObject(components,'cm5');
@@ -398,8 +424,21 @@ GraphicDisplay.prototype.move = function(components){
 	var eje7 = this.findObject(components,'eje7');
 	var ejeF = this.findObject(components,'ejeF');
 	var ejeF1 = this.findObject(components,'ejeF1');
+	var ps3 = -Math.round(controller.axes[1] * 100);
+	if(ps3 >= 0){
+		ps3 = ps3;
+	}else{
+		ps3 = 0;
+	}
+	//var angle = 90 - Math.acos(this.fuerza/(8.93 * this.gravity)) * 180 / Math.PI;
+	var angle = 90 - Math.acos(ps3/(8.93 * this.gravity)) * 180 / Math.PI;
+	
+	
+	if(isNaN(angle)){
+		angle = 90
+	}
 
-	components[mesa].a = this.fuerza;
+	components[mesa].a = angle;
 	components[mesa_back].a = 180 + components[mesa].a;
 
 	components[cm7].x1 = this.getCoorX(components[mesa_back].x1 ,
@@ -484,6 +523,7 @@ GraphicDisplay.prototype.move = function(components){
 	components[tapa1P].y1 = components[tapa1].y1;
 	components[tapa1P].a = 180 + components[tapa1].a;
 
+
 	components[tapa3].x1 = this.getCoorX(components[tapa1].x1 ,
 										components[tapa1].a,
 										components[tapa1].l); 
@@ -499,6 +539,9 @@ GraphicDisplay.prototype.move = function(components){
 										components[tapa2].a,
 										components[tapa2].l);
 	components[tapa4].a = 90 + components[tapa2].a;
+
+	
+												
 
 };
 GraphicDisplay.prototype.findObject = function(components,name){

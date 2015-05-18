@@ -15,7 +15,7 @@ window.onload = function() {
 	var gui = new dat.GUI();
 
 	var controller = gui.add(text, 'Angulo', 0, 90);
-	var fuerza = gui.add(text, 'Fuerza', 0, 100);
+	var fuerza = gui.add(text, 'Fuerza', 0, 500);
 	var ancho_mesa = gui.add(text, 'Ancho_Mesa');
 	var ancho_mdf = gui.add(text, 'Ancho_MDF');
 	var largo = gui.add(text, 'Largo');
@@ -65,9 +65,9 @@ window.onload = function() {
 	});
 
 	gd.init();
+
 	setInterval(function () {
 		gd.execute();
-		console.log('ee')
 	}, 5);
 
 
