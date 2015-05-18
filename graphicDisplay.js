@@ -239,17 +239,17 @@ GraphicDisplay.prototype.ejes = function(components){
 											 	'eje3',
 											  	'green', 
 											  	1.5));
-	this.logicDisplay.addComponent(new LineAngle(components[cm2].x1,
-												components[cm2].y1, 
+	this.logicDisplay.addComponent(new LineAngle(components[tapa1].x1,
+												components[tapa1].y1 + this.ancho_perfil, 
 												50,
-												270,
+												180,
 											 	'eje2',
 											  	'green', 
 											  	1.5));
-	this.logicDisplay.addComponent(new LineAngle(components[cm1].x1,
-												components[cm1].y1, 
+	this.logicDisplay.addComponent(new LineAngle(components[tapa1].x1,
+												components[tapa1].y1 + this.ancho_perfil, 
 												50,
-												270,
+												90,
 											 	'eje1',
 											  	'green', 
 											  	1.5));
@@ -432,17 +432,19 @@ GraphicDisplay.prototype.move = function(components){
 	var ejeF = this.findObject(components,'ejeF');
 	var ejeF1 = this.findObject(components,'ejeF1');
 	var ps3 = -Math.round(controller.axes[1] * 100);
-	
+	var fuer = 0;
 	if (this.fuerza == 0){
 		if(ps3 >= 0){
 		ps3 = ps3;
 		}else{
 			ps3 = 0;
 		}
-		var angle = 90 - Math.acos(ps3/(8.93 * this.gravity)) * 180 / Math.PI;
+		fuer = ps3;
 	}else{
-		var angle = 90 - Math.acos(this.fuerza/(8.93 * this.gravity)) * 180 / Math.PI;
+		fuer = this.fuerza;
 	}
+
+	var angle = 90 - Math.acos(fuer / (8.93 * this.gravity)) * 180 / Math.PI;
 	
 	
 	
@@ -525,11 +527,20 @@ GraphicDisplay.prototype.move = function(components){
 	components[ejeF].x1 = components[tapa1].x1;
 	components[ejeF].y1 = components[tapa1].y1;
 	components[ejeF].a =  0 + components[tapa1].a;
+	components[ejeF].l = fuer;
+
+	components[eje1].x1 = components[ejeF].x1;
+	components[eje1].y1 = components[ejeF].y1;
+	components[eje1].l = fuer * Math.sin(this.getAngle(components[ejeF].a));
+	components[eje2].x1 = components[ejeF].x1;
+	components[eje2].y1 = components[ejeF].y1;
+	components[eje2].l = fuer * -Math.cos(this.getAngle(components[ejeF].a));
 
 	components[ejeF1].x1 = components[tapa2].x1;
 	components[ejeF1].y1 = components[tapa2].y1;
 	components[ejeF1].a =  0 +  components[tapa2].a;
-
+	components[ejeF1].l = fuer;
+	
 
 	components[tapa1P].x1 = components[tapa1].x1;
 	components[tapa1P].y1 = components[tapa1].y1;
