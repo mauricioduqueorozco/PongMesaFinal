@@ -11,27 +11,34 @@ function GraphicDisplay(ctx, width, height){
 	this.ancho_mdf = 0;
 	this.ancho_mesa = 0;
 	this.largo = 0; // largo de mesa
-	this.alto_mesa = 0; // largo de mesa
+	this.alto_mesa = 0; // alto de mesa
 	this.densidad = 0;
 	this.scaleFactor = 300;
 	this.middleX = this.width / 2;
 	this.middleY = this.height / 2;
 	this.distance = 0;
 	this.gravity = 9.81; //gravedad
-	this.ancho_perfil = 0.1;
+	this.ancho_perfil = 0;
 	this.zoomFactor = 1;
 	this.fuerza = 0;
 	this.masa = 100;
+	this.pesoPerfil = 0.79 / this.gravity; // por metro.
+	this.moveX = 0;
+	this.moveY =0;
+	this.fx = 0;
+	this.fy = 0;
 };
 
 GraphicDisplay.prototype.init = function() {
+	
 	this.logicDisplay = new LogicDisplay();
 	//this.logicDisplay.test()
 	this.normMedidas();
 	this.elements();
 	this.centrosMasa(this.logicDisplay.components);
 	this.ejes(this.logicDisplay.components);
-	console.log(this.logicDisplay.components)
+	this.setDisplay(false);
+	
 };
 
 GraphicDisplay.prototype.normMedidas = function(){
@@ -135,8 +142,8 @@ GraphicDisplay.prototype.elements = function(){
 													 'p_movil',
 													 'red',
 													 1));
-	this.logicDisplay.addComponent(new Rectangle(this.middleX,
-													 this.middleY - (this.ancho_perfil / 2),
+	this.logicDisplay.addComponent(new Rectangle(this.middleX + 2,
+													 this.middleY - (this.ancho_perfil * 2 / 3),
 													 this.middleX + this.ancho_perfil,
 													 this.middleY - this.alto_mesa + this.ancho_perfil + this.ancho_mdf,
 													 'p_fija',
@@ -176,16 +183,16 @@ GraphicDisplay.prototype.centrosMasa = function(components){
 												5,
 												'cm6'));
 	//Centro de gravedad general 
-	this.logicDisplay.addComponent(new Circle(components[mesa_back].x1 - components[mesa_back].l / 2,
+	this.logicDisplay.addComponent(new Circle(components[mesa_back].x1 - components[mesa_back].l,
 												components[mesa_back].y1,
 												5,
 												'cm7'));
 	this.logicDisplay.addComponent(new Circle(  (components[tapa2].x1 + components[tapa1].x1) / 2,
-												((components[tapa2].y1 + components[tapa1].y1) / 2) + this.ancho_perfil / 2,
+												((components[tapa2].y1 + components[tapa1].y1) / 2) - this.ancho_perfil / 2,
 												5,
 												'cm8'));
 	this.logicDisplay.addComponent(new Circle(  (components[tapa2].x1 + components[tapa1].x1) / 2,
-												((components[tapa2].y1 + components[tapa1].y1) / 2) + this.ancho_perfil + this.ancho_mdf / 2,
+												((components[tapa2].y1 + components[tapa1].y1) / 2) - this.ancho_perfil - this.ancho_mdf / 2,
 												5,
 												'cm9'));
 };
@@ -199,6 +206,7 @@ GraphicDisplay.prototype.ejes = function(components){
 	var cm3 = this.findObject(components,'cm3');
 	var cm2 = this.findObject(components,'cm2');
 	var cm1 = this.findObject(components,'cm1');
+	var pie = this.findObject(components,'pie');
 	var tapa1 = this.findObject(components,'tapa1');
 	var tapa2 = this.findObject(components,'tapa2');
 
@@ -212,7 +220,10 @@ GraphicDisplay.prototype.ejes = function(components){
 
 	this.logicDisplay.addComponent(new LineAngle(components[cm6].x1,
 												components[cm6].y1, 
-												50,
+												this.getDistance(components[pie].x1,
+													components[pie].y1,
+													components[pie].x2,
+													components[pie].y2) * this.gravity * this.pesoPerfil,
 												270,
 											 	'eje6',
 											  	'green', 
@@ -220,15 +231,15 @@ GraphicDisplay.prototype.ejes = function(components){
 
 	this.logicDisplay.addComponent(new LineAngle(components[cm5].x1,
 												components[cm5].y1, 
-												50,
+												this.gravity * (this.alto_mesa - this.ancho_mdf - this.ancho_perfil) * this.pesoPerfil,
 												270,
 											 	'eje5',
 											  	'green', 
 											  	1.5));
-	this.logicDisplay.addComponent(new LineAngle(components[cm4].x1,
-												components[cm4].y1, 
+	this.logicDisplay.addComponent(new LineAngle(components[cm7].x1,
+												components[cm7].y1, 
 												50,
-												270,
+												180,
 											 	'eje4',
 											  	'green', 
 											  	1.5));
@@ -237,7 +248,7 @@ GraphicDisplay.prototype.ejes = function(components){
 												50,
 												270,
 											 	'eje3',
-											  	'green', 
+											  	'pink', 
 											  	1.5));
 	this.logicDisplay.addComponent(new LineAngle(components[tapa1].x1,
 												components[tapa1].y1 + this.ancho_perfil, 
@@ -431,7 +442,11 @@ GraphicDisplay.prototype.move = function(components){
 	var eje7 = this.findObject(components,'eje7');
 	var ejeF = this.findObject(components,'ejeF');
 	var ejeF1 = this.findObject(components,'ejeF1');
-	var ps3 = -Math.round(controller.axes[1] * 100);
+	var ps3 = 0;
+
+
+	//ps3 = -Math.round(controller.axes[1] * 100); // quitar comentario si tiene un mando de PS3.
+
 	var fuer = 0;
 	if (this.fuerza == 0){
 		if(ps3 >= 0){
@@ -454,19 +469,25 @@ GraphicDisplay.prototype.move = function(components){
 
 	components[mesa].a = angle;
 	components[mesa_back].a = 180 + components[mesa].a;
-
+	this.angle = angle;
 	components[cm7].x1 = this.getCoorX(components[mesa_back].x1 ,
 										components[mesa_back].a,
-										components[mesa_back].l / 2);
+										components[mesa_back].l);
 
 	components[cm7].y1 = this.getCoorY(components[mesa_back].y1 ,
 										components[mesa_back].a,
-										components[mesa_back].l / 2);
+										components[mesa_back].l);
 	
 
 	components[eje7].x1 = components[cm7].x1;
 	components[eje7].y1 = components[cm7].y1;
 	components[eje7].a = 270;
+	components[eje7].l = fuer * -Math.sin(this.getAngle(components[ejeF1].a));
+
+	components[eje4].x1 = components[cm7].x1;
+	components[eje4].y1 = components[cm7].y1;
+	components[eje4].a = 180;
+	components[eje4].l = fuer * -Math.cos(this.getAngle(components[ejeF1].a));
 	
 	components[c2].x1 = this.getCoorX(components[mesa].x1 ,
 										components[mesa].a,
@@ -490,6 +511,7 @@ GraphicDisplay.prototype.move = function(components){
 
 	components[eje5].x1 = components[cm5].x1;
 	components[eje5].y1 = components[cm5].y1;
+	
 					
 	components[c4].x1 = components[p_movil].x2 - this.ancho_perfil /2;
 	components[c4].y1 = components[p_movil].y2 + this.alto_mesa / 2 - this.ancho_mdf - this.ancho_perfil / 2;
@@ -532,9 +554,12 @@ GraphicDisplay.prototype.move = function(components){
 	components[eje1].x1 = components[ejeF].x1;
 	components[eje1].y1 = components[ejeF].y1;
 	components[eje1].l = fuer * Math.sin(this.getAngle(components[ejeF].a));
+	this.fx = components[eje1].l;
+
 	components[eje2].x1 = components[ejeF].x1;
 	components[eje2].y1 = components[ejeF].y1;
 	components[eje2].l = fuer * -Math.cos(this.getAngle(components[ejeF].a));
+	this.fy = components[eje2].l;
 
 	components[ejeF1].x1 = components[tapa2].x1;
 	components[ejeF1].y1 = components[tapa2].y1;
@@ -601,6 +626,8 @@ GraphicDisplay.prototype.getDistance = function(x,y,x1,y1){
 };
 GraphicDisplay.prototype.setDisplay = function(value){
 
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm9')].setActive(false);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm8')].setActive(false);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm7')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm6')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm5')].setActive(value);
@@ -608,17 +635,17 @@ GraphicDisplay.prototype.setDisplay = function(value){
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm3')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm2')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm1')].setActive(value);	
-
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje7')].setActive(value);
+	
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeC')].setActive(false);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeC1')].setActive(false);
+	//this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje7')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje6')].setActive(value);
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje5')].setActive(value);
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje4')].setActive(value);
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje3')].setActive(value);
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje2')].setActive(value);
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje1')].setActive(value);
-
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeF')].setActive(value);
-	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'ejeF1')].setActive(value);	
+	//this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje4')].setActive(value);
+	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje3')].setActive(false);
+	//this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje2')].setActive(value);
+	//this.logicDisplay.components[this.findObject(this.logicDisplay.components,'eje1')].setActive(value);
+	
 };
 
 
