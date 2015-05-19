@@ -1,9 +1,15 @@
+// Objeto principal con metodos de motor y calculos del programa.
+// administra todas las variables del sistema, se crea en el momento 
+// que aparece la variable "gd" al arrancar el archivo de server.js
+
+
 function GraphicDisplay(ctx, width, height){
 	this.ctx = ctx;
 
-	this.width = width;
+	this.width = width; // tamano del canvas
 	this.height = height;
 
+	// instancias de variables propias de la clase
 	this.angle = null;
 	this.rot = new logicalMath();
 	this.coord = null;
@@ -29,6 +35,8 @@ function GraphicDisplay(ctx, width, height){
 	this.fy = 0;
 };
 
+// Setea los prarametros iniciales del programa.
+// Su ejecucion se da una sola vez
 GraphicDisplay.prototype.init = function() {
 	
 	this.logicDisplay = new LogicDisplay();
@@ -41,6 +49,9 @@ GraphicDisplay.prototype.init = function() {
 	
 };
 
+// Aplica el factor de multiplicacion, para el 
+// escalado de los elementos
+
 GraphicDisplay.prototype.normMedidas = function(){
 	this.ancho_mdf = this.ancho_mdf * this.scaleFactor;
 	this.ancho_mesa = this.ancho_mesa * this.scaleFactor;
@@ -49,6 +60,7 @@ GraphicDisplay.prototype.normMedidas = function(){
 	this.ancho_perfil = this.ancho_perfil * this.scaleFactor;
 };
 
+// Crea los elementos basicos que componen el ejercicio
 GraphicDisplay.prototype.elements = function(){
 	this.logicDisplay.addComponent(new LineAngle( this.middleX, 
 													this.middleY, 
@@ -150,6 +162,7 @@ GraphicDisplay.prototype.elements = function(){
 													 'red',
 													 1));
 }
+// Calculo los centros de masa de la mesa
 GraphicDisplay.prototype.centrosMasa = function(components){
 	var mesa = this.findObject(components,'mesa');
 	var mesa_back = this.findObject(components,'mesa_back');
@@ -196,6 +209,8 @@ GraphicDisplay.prototype.centrosMasa = function(components){
 												5,
 												'cm9'));
 };
+
+// Crea los ejes en donde hay vectores de fuerza del sistema.
 GraphicDisplay.prototype.ejes = function(components){
 	var cm9 = this.findObject(components,'cm9');
 	var cm8 = this.findObject(components,'cm8');
@@ -295,6 +310,10 @@ GraphicDisplay.prototype.ejes = function(components){
 											  	1.5));
 
 };
+
+// Por cada iteracion del evento "setInterval" de server.js
+// se tiene que limpiar la pantalla, para no redibujar sobre ella.
+
 GraphicDisplay.prototype.clearAll = function() {
 	this.ctx.restore();
         this.ctx.fillStyle = "black";
@@ -302,6 +321,7 @@ GraphicDisplay.prototype.clearAll = function() {
 	this.ctx.save();
 };
 
+// Dibuja lineas a partir de dos putos.
 GraphicDisplay.prototype.drawLine = function(x , y , x1 , y1, color, lineWidth) {
 
 	this.ctx.lineWidth = lineWidth;
@@ -313,6 +333,8 @@ GraphicDisplay.prototype.drawLine = function(x , y , x1 , y1, color, lineWidth) 
         this.ctx.closePath();
 	this.ctx.stroke();
 };
+
+// Dibuja lineas a partir de un punto, su largo, angulo.
 GraphicDisplay.prototype.drawLineAngle = function(x , y , l , a , color, lineWidth) {
 	this.ctx.beginPath();
 	this.ctx.lineWidth = lineWidth;
@@ -323,6 +345,8 @@ GraphicDisplay.prototype.drawLineAngle = function(x , y , l , a , color, lineWid
 	this.ctx.closePath();
 	this.ctx.stroke();
 };
+
+// Dibuja rectangulos a partir de lineas suministrando dos puntos.
 GraphicDisplay.prototype.drawRectangle = function(x,y,x1,y1,color, lineWidth){
 	this.drawLine(x,y,x1,y,color, lineWidth)
 	this.drawLine(x1,y,x1,y1,color, lineWidth)
@@ -330,6 +354,7 @@ GraphicDisplay.prototype.drawRectangle = function(x,y,x1,y1,color, lineWidth){
 	this.drawLine(x,y1,x,y,color, lineWidth)
 };
 
+// Dibuja circulos a partir de un punto y el radio
 GraphicDisplay.prototype.drawCircle = function(x1, y1, radius) {
 	this.ctx.lineWidth = 0.5;
 	this.ctx.fillStyle = 'red';
@@ -341,13 +366,18 @@ GraphicDisplay.prototype.drawCircle = function(x1, y1, radius) {
 	this.ctx.stroke();
 };
 
-
+// Este metodo se ejecuta cada 5 ms, y se encarga de la renderizacion.
 
 GraphicDisplay.prototype.execute = function() {
 	this.clearAll();
 	this.drawAllComponents(this.logicDisplay.components);
 	this.move(this.logicDisplay.components);
 };
+
+// Llama los elementos del arreglo en donde se encuentran los componentes
+// verifica si estan activos y llama la funcion "this.drawComponent" 
+// suministrandole componente por componete para dibujarlo.
+
 GraphicDisplay.prototype.drawAllComponents = function(components) {
 	for (var i = 0; i < components.length; i++) {
 		if ( !components[i].isActive() )
@@ -356,6 +386,9 @@ GraphicDisplay.prototype.drawAllComponents = function(components) {
 		this.drawComponent(components[i]);
 	}
 };
+
+// Verifica el tipo de componente y le envia a cada funcion 
+// Graficadora con los componentes para que se dibujen
 GraphicDisplay.prototype.drawComponent = function(component) {
 
 	/*this.zoomFactor = 1 / Math.round(controller.axes[2] * 100);
@@ -409,6 +442,9 @@ GraphicDisplay.prototype.drawComponent = function(component) {
 		
 	}
 };
+
+// Esta funcion encuentra los componentes, con la finalidad
+// de verificar su posicion y eslabonarla en cada iteracion
 GraphicDisplay.prototype.move = function(components){
 	var mesa = this.findObject(components,'mesa');
 	var mesa_back = this.findObject(components,'mesa_back');
@@ -446,7 +482,8 @@ GraphicDisplay.prototype.move = function(components){
 
 
 	//ps3 = -Math.round(controller.axes[1] * 100); // quitar comentario si tiene un mando de PS3.
-
+	// Verifica los valores de mando PS3, si se esta usando, y se pasan como valres enteros a la 
+	// funcion de fuerza.
 	var fuer = 0;
 	if (this.fuerza == 0){
 		if(ps3 >= 0){
@@ -592,6 +629,9 @@ GraphicDisplay.prototype.move = function(components){
 												
 
 };
+
+// encuentra la ubicacion de los componentes dentro del arreglo,
+// suministrandole un arreglo de componentes y el nombre al que debe buscar
 GraphicDisplay.prototype.findObject = function(components,name){
 	for (var i = 0; i < components.length; i++) {
 		if(components[i].name == name){
@@ -600,30 +640,44 @@ GraphicDisplay.prototype.findObject = function(components,name){
 	}
 };
 
+// Redondea y setea el angulo
 GraphicDisplay.prototype.setAngle = function(angle){
 	this.angle = Math.round( angle );
 }
+
+// Obtiene el angulo en radianes
 GraphicDisplay.prototype.getAngle = function(angle){
 	var theta = angle * Math.PI / 180;
 	return theta;
 };
+
+// Obtiene la coordenada de la proyeccion de la linea,
+// a partir de el punto x, el angulo y la longitud.
 GraphicDisplay.prototype.getCoorX = function(x , a , l){
 	var desp_X = Math.cos(this.getAngle(a)) * l + x;
 	return desp_X
 };
+
+// Obtiene la coordenada de la proyeccion de la linea,
+// a partir de el punto y, el angulo y la longitud.
 GraphicDisplay.prototype.getCoorY = function(y , a , l){
 	var desp_Y = Math.sin(this.getAngle(a)) * l + y;
 	return desp_Y
 };
+
+// Setea la fuerza
 GraphicDisplay.prototype.setFuerza = function(fuerza){
 	this.fuerza = Math.round( fuerza );
 
 };
 
+// Obtiene la distancia entre dos putos suministrados
 GraphicDisplay.prototype.getDistance = function(x,y,x1,y1){
 	var distance = Math.sqrt(Math.pow(x - x1, 2) + Math.pow(y - y1, 2));
 	return distance.toFixed(2);
 };
+
+// Permite la visualizacion o no de los elementos.
 GraphicDisplay.prototype.setDisplay = function(value){
 
 	this.logicDisplay.components[this.findObject(this.logicDisplay.components,'cm9')].setActive(false);

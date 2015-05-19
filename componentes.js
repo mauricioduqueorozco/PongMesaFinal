@@ -1,4 +1,10 @@
+// Esta es la clase constructora de los elementos,
+// se crea con el objetivo de estandarizar la creacion
+// de los elementos, para su mejor manupulacion.
+// De esta forma se pueden agregar de manera ordenada en el 
+// Arreglo de objetos.
 
+// arreblo de tipo del elemento
 var COMPONENT_TYPES = {
 		POINT : 1,
 		LINE : 2,
@@ -7,21 +13,25 @@ var COMPONENT_TYPES = {
 		LINE_ANGLE : 5
 };
 
-
+// para cualquier componente, el tipo y si esta activado
+// Por defecto se pone la activacion en verdadero.
 function Component() {
 	this.active = true;
 	this.type = 0; 
 	//this.color = "black";
 }
 
+// SET de activacion
 Component.prototype.setActive = function(active) {
 	this.active = active;
 };
 
+// Retorna si el elemento esta activo o no.
 Component.prototype.isActive = function() {
 	return this.active;
 };
 
+// Elemento constructor de linea
 function Line(x1, y1, x2, y2, name, color, lineWidth) {
 	Component.call(this);
 	
@@ -54,6 +64,7 @@ function Line(x1, y1, x2, y2, name, color, lineWidth) {
 Line.prototype = new Component();
 Line.prototype.constructor = Line;
 
+// Elemento constructor de Rectangulos y hereda de Line
 function Rectangle(x1, y1, x2, y2, name, color, lineWidth) {
 	Line.call(this, x1, y1, x2, y2, name, color, lineWidth);
 	
@@ -62,6 +73,9 @@ function Rectangle(x1, y1, x2, y2, name, color, lineWidth) {
 Rectangle.prototype = new Line();
 Rectangle.prototype.constructor = Rectangle;
 
+// Elemento creador de Linea bajo parametro:
+// una sola cordenada, longitud y angulo con respecto a la horizontal
+// nombre del elemento, color y tamano de linea
 function LineAngle(x1, y1, l, a , name , color, lineWidth) {
 	Component.call(this);
 	
@@ -94,6 +108,9 @@ function LineAngle(x1, y1, l, a , name , color, lineWidth) {
 LineAngle.prototype = new Component();
 LineAngle.prototype.constructor = LineAngle;
 
+
+// elemento  constructor de Circulos, a partir de un punto
+// y el radio
 function Circle(x1, y1, radius, name) {
 	Line.call(this);
 	

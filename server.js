@@ -1,16 +1,26 @@
+// Esta funcion es la principal para iniciar el programa.
+// El evento "window.onload" se ejecuta cuando la pagina 
+// ya esta cargada.
+
 window.onload = function() {
 
-
+	// set de color de fondo de pagina
 	document.body.style.background = "black";
+	// Crea el elemento "canvas"
 	var canvas = document.createElement("canvas");
+	// Asigna el tamano del camvas y su id
 	canvas.width = 1000;
 	canvas.height = 600;
 	canvas.id = 'canvas';
+	// anexa el canvas dentro de la pagina DOM.
 	document.body.appendChild(canvas);
+	// Le asigna el contexto
 	var ctx = canvas.getContext("2d");
 	
+	// Crea una instancia del objeto "GraphicDisplay".
 	var gd = new GraphicDisplay(ctx, canvas.width, canvas.height);
 	
+	// Crea la instancia del panel de controles
 	var text = new this.FizzyText();
 	var gui = new dat.GUI();
 
@@ -26,6 +36,7 @@ window.onload = function() {
 	gui.add(text, 'Fuerza_X').listen();
 	gui.add(text, 'Fuerza_Y').listen();
 
+	// Actualiza las variables en el panel de control
 	var update = function() {
 	  //requestAnimationFrame(update);
 	  text.Angulo = gd.angle;
@@ -38,19 +49,20 @@ window.onload = function() {
 	gui.add(text, 'Peso');
 	var displayCentros = gui.add(text, 'displayCentros');
 
+	// asigna las variables del panel al engine del programa
 	gd.ancho_mesa = ancho_mesa.initialValue;
 	gd.largo = largo.initialValue;
 	gd.ancho_mdf = ancho_mdf.initialValue;
 	gd.alto_mesa = alto_mesa.initialValue;
 	gd.densidad = densidad.initialValue;
 	gd.ancho_perfil = ancho_perfil.initialValue;
-		
+	
+
+	// Eventos	
 	displayCentros.onChange(function(value) {
 		 gd.setDisplay(value);
 	});
 	
-
-
 	fuerza.onChange(function(value) {
 		 gd.setFuerza(value);
 	});
@@ -75,9 +87,13 @@ window.onload = function() {
 		 gd.densidad = value;
 		 
 	});
-
+    
+    // Inicializa el engine
 	gd.init();
 	
+	// ejecuta el metodo "execute"
+	// en un intervalo de 5 ms
+	// en si es el motor de render.
 	setInterval(function () {
 		gd.execute();
 		update();
