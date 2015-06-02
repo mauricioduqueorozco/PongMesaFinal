@@ -482,6 +482,8 @@ GraphicDisplay.prototype.move = function(components){
 
 
 	//ps3 = -Math.round(controller.axes[1] * 100); // quitar comentario si tiene un mando de PS3.
+	
+
 	// Verifica los valores de mando PS3, si se esta usando, y se pasan como valres enteros a la 
 	// funcion de fuerza.
 	var fuer = 0;
